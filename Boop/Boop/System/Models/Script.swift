@@ -15,7 +15,7 @@ class Script: NSObject {
     var isBuiltInt: Bool
     var url: URL
     var scriptCode: String
-    var needsArgument:Bool
+    var args: String?
     
     lazy var context: JSContext = { [unowned self] in
         let context: JSContext = JSContext()
@@ -47,24 +47,29 @@ class Script: NSObject {
     var desc: String?
     var icon: String?
     var bias: Double?
+    var argsTint: String?
+    var needsArgs:Bool {
+        get {
+            return argsTint != nil
+        }
+    }
     
     weak var delegate: ScriptDelegate?
     
-    init(url: URL, script:String, parameters: [String: Any], builtIn: Bool, delegate: ScriptDelegate? = nil, needsArgument:Bool = true) {
+    init(url: URL, script:String, parameters: [String: Any], builtIn: Bool, delegate: ScriptDelegate? = nil) {
         
         
         self.scriptCode = script
         self.info = parameters
         self.url = url
         self.isBuiltInt = builtIn
-        self.needsArgument = needsArgument
         
         self.name = parameters["name"] as? String
         self.tags = parameters["tags"] as? String
         self.desc = parameters["description"] as? String
         self.icon = (parameters["icon"] as? String)?.lowercased()
         self.bias = parameters["bias"] as? Double
-        
+        self.argsTint = parameters["argsTint"] as? String
         
         
         // We set the delegate after the initial eval to avoid

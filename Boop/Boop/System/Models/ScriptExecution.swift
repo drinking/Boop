@@ -13,6 +13,7 @@ import JavaScriptCore
     var selection: String? { get set }
     var fullText: String? { get set }
     var text: String? { get set }
+    var args: String? { get set }
     var isSelection: Bool { get }
     func postError(_ error: String)
     func postInfo(_ info: String)
@@ -26,6 +27,7 @@ import JavaScriptCore
     var selection: String?
     var fullText: String?
     let insertIndex: Int?
+    var args:String?
     
     var insertOffset: Int = 0
     
@@ -37,6 +39,7 @@ import JavaScriptCore
         self.fullText = fullText
         self.script = script
         self.insertIndex = insertIndex
+        self.args = script.args
     }
     
     var text: String? {

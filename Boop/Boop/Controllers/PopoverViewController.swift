@@ -52,10 +52,13 @@ class PopoverViewController: NSViewController {
             if self.inputingArgs {
                 if(theEvent.keyCode == 36) {
                     self.runSelectedScript()
-                    return nil
-                }else {
-                    return theEvent
                 }
+                
+                if theEvent.keyCode == 53 {
+                    self.hide()
+                }
+                
+                return theEvent
             }
                 
             // Key codes:
@@ -78,7 +81,7 @@ class PopoverViewController: NSViewController {
                     return theEvent
                 }
                 
-                if self.tableViewController.selectedScript!.needsArgument {
+                if self.tableViewController.selectedScript!.needsArgs {
                     self.showArgumentInput()
                     return theEvent
                 }
@@ -133,6 +136,7 @@ class PopoverViewController: NSViewController {
         
         self.searchField.stringValue = ""
         self.tableHeightConstraint.constant = 0
+        self.searchField.placeholderString = "Start typing..."
         
         self.view.window?.makeFirstResponder(self.searchField)
         self.enabled = true
@@ -143,24 +147,16 @@ class PopoverViewController: NSViewController {
     
     func showArgumentInput() {
         
-        
-        self.hide()
-        
-        overlayView.show()
-        popoverView.show()
-        
         // FIXME: Use localized strings
         statusView.setStatus(.help("Input your arguments"))
         
         self.searchField.stringValue = ""
+        self.searchField.placeholderString = self.tableViewController.selectedScript?.argsTint ?? "Typing arguments..."
         self.tableHeightConstraint.constant = 0
         
         self.view.window?.makeFirstResponder(self.searchField)
         self.enabled = true
         self.inputingArgs = true
-        
-        appDelegate.setPopover(isOpen: true)
-        
         
     }
     
@@ -189,7 +185,13 @@ class PopoverViewController: NSViewController {
             return
         }
 
-        print(self.searchField.stringValue)
+        if script.needsArgs {
+            if self.searchField.stringValue.count == 0 {
+                return
+            }
+            script.args = self.searchField.stringValue
+        }
+        
         // Let's dismiss the popover
         hide()
 
@@ -202,6 +204,10 @@ class PopoverViewController: NSViewController {
 extension PopoverViewController: NSTextFieldDelegate {
     func controlTextDidChange(_ obj: Notification) {
         guard (obj.object as? SearchField) == searchField else {
+            return
+        }
+        
+        if self.inputingArgs {
             return
         }
         

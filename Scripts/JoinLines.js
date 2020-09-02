@@ -5,10 +5,11 @@
 		"description":"Joins all lines without any delimiter.",
 		"author":"riesentoaster",
 		"icon":"collapse",
-		"tags":"join"
+		"tags":"join",
+		"argsTint":"seperator like , | / ..."
 	}
 **/
 
 function main(input) {
-	input.text = input.text.replace(/\n/g, '');
+	input.text = input.text.replace(/\n/g, input.args);
 }

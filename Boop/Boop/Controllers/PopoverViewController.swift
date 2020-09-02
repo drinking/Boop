@@ -25,6 +25,7 @@ class PopoverViewController: NSViewController {
     @IBOutlet weak var appDelegate: AppDelegate!
     
     var enabled = false // Closed by default
+    var inputingArgs = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +48,15 @@ class PopoverViewController: NSViewController {
             (_ theEvent: NSEvent) -> NSEvent? in
             
             var didSomething = false
+            
+            if self.inputingArgs {
+                if(theEvent.keyCode == 36) {
+                    self.runSelectedScript()
+                    return nil
+                }else {
+                    return theEvent
+                }
+            }
                 
             // Key codes:
             // 125 is down arrow
@@ -65,6 +75,11 @@ class PopoverViewController: NSViewController {
             if theEvent.keyCode == 36 && self.enabled { // ENTER
 
                 guard self.tableViewController.selectedScript != nil else {
+                    return theEvent
+                }
+                
+                if self.tableViewController.selectedScript!.needsArgument {
+                    self.showArgumentInput()
                     return theEvent
                 }
 
@@ -126,6 +141,29 @@ class PopoverViewController: NSViewController {
         
     }
     
+    func showArgumentInput() {
+        
+        
+        self.hide()
+        
+        overlayView.show()
+        popoverView.show()
+        
+        // FIXME: Use localized strings
+        statusView.setStatus(.help("Input your arguments"))
+        
+        self.searchField.stringValue = ""
+        self.tableHeightConstraint.constant = 0
+        
+        self.view.window?.makeFirstResponder(self.searchField)
+        self.enabled = true
+        self.inputingArgs = true
+        
+        appDelegate.setPopover(isOpen: true)
+        
+        
+    }
+    
     func hide() {
         overlayView.hide()
         popoverView.hide()
@@ -134,6 +172,7 @@ class PopoverViewController: NSViewController {
         
         self.view.window?.makeFirstResponder(self.editorView.contentTextView)
         self.enabled = false
+        self.inputingArgs = false
         self.tableHeightConstraint.animator().constant = 0
         
         tableViewController.results = []
@@ -150,6 +189,7 @@ class PopoverViewController: NSViewController {
             return
         }
 
+        print(self.searchField.stringValue)
         // Let's dismiss the popover
         hide()
 

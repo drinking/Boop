@@ -25,6 +25,7 @@ class PopoverViewController: NSViewController {
     @IBOutlet weak var appDelegate: AppDelegate!
     
     var enabled = false // Closed by default
+    var inputingArgs = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +48,18 @@ class PopoverViewController: NSViewController {
             (_ theEvent: NSEvent) -> NSEvent? in
             
             var didSomething = false
+            
+            if self.inputingArgs {
+                if(theEvent.keyCode == 36) {
+                    self.runSelectedScript()
+                }
+                
+                if theEvent.keyCode == 53 {
+                    self.hide()
+                }
+                
+                return theEvent
+            }
                 
             // Key codes:
             // 125 is down arrow
@@ -65,6 +78,11 @@ class PopoverViewController: NSViewController {
             if theEvent.keyCode == 36 && self.enabled { // ENTER
 
                 guard self.tableViewController.selectedScript != nil else {
+                    return theEvent
+                }
+                
+                if self.tableViewController.selectedScript!.needsArgs {
+                    self.showArgumentInput()
                     return theEvent
                 }
 
@@ -118,11 +136,28 @@ class PopoverViewController: NSViewController {
         
         self.searchField.stringValue = ""
         self.tableHeightConstraint.constant = 0
+        self.searchField.placeholderString = "Start typing..."
         
         self.view.window?.makeFirstResponder(self.searchField)
         self.enabled = true
         
         appDelegate.setPopover(isOpen: true)
+        
+    }
+    
+    func showArgumentInput() {
+        
+        // FIXME: Use localized strings
+        statusView.setStatus(.help("Input your arguments"))
+        
+        self.searchField.stringValue = ""
+        self.tableViewController.argScript = self.tableViewController.selectedScript
+        self.searchField.placeholderString = self.tableViewController.argScript?.argsTint ?? "Typing arguments..."
+        self.tableHeightConstraint.constant = 0
+        
+        self.view.window?.makeFirstResponder(self.searchField)
+        self.enabled = true
+        self.inputingArgs = true
         
     }
     
@@ -134,6 +169,7 @@ class PopoverViewController: NSViewController {
         
         self.view.window?.makeFirstResponder(self.editorView.contentTextView)
         self.enabled = false
+        self.inputingArgs = false
         self.tableHeightConstraint.animator().constant = 0
         
         tableViewController.results = []
@@ -146,6 +182,19 @@ class PopoverViewController: NSViewController {
     }
 
     @objc private func runSelectedScript() {
+        
+        if let argScript = tableViewController.argScript {
+            if self.searchField.stringValue.count == 0 {
+                return
+            }
+            argScript.args = self.searchField.stringValue
+            
+            hide()
+            scriptManager.runScript(argScript, into: editorView)
+            tableViewController.argScript = nil
+            return
+        }
+        
         guard let script = tableViewController.selectedScript else {
             return
         }
@@ -162,6 +211,10 @@ class PopoverViewController: NSViewController {
 extension PopoverViewController: NSTextFieldDelegate {
     func controlTextDidChange(_ obj: Notification) {
         guard (obj.object as? SearchField) == searchField else {
+            return
+        }
+        
+        if self.inputingArgs {
             return
         }
         

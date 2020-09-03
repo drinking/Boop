@@ -15,6 +15,7 @@ class Script: NSObject {
     var isBuiltInt: Bool
     var url: URL
     var scriptCode: String
+    var args: String?
     
     lazy var context: JSContext = { [unowned self] in
         let context: JSContext = JSContext()
@@ -46,6 +47,12 @@ class Script: NSObject {
     var desc: String?
     var icon: String?
     var bias: Double?
+    var argsTint: String?
+    var needsArgs:Bool {
+        get {
+            return argsTint != nil
+        }
+    }
     
     weak var delegate: ScriptDelegate?
     
@@ -62,7 +69,7 @@ class Script: NSObject {
         self.desc = parameters["description"] as? String
         self.icon = (parameters["icon"] as? String)?.lowercased()
         self.bias = parameters["bias"] as? Double
-        
+        self.argsTint = parameters["argsTint"] as? String
         
         
         // We set the delegate after the initial eval to avoid

@@ -53,4 +53,6 @@ class ScriptsTableViewController: NSViewController, NSTableViewDelegate, NSTable
         }
         return scriptAt(tableView.selectedRow)
     }
+    
+    var argScript:Script?
 }

@@ -201,17 +201,17 @@ class PopoverViewController: NSViewController {
 
     @objc private func runSelectedScript() {
         
-        if let argScript = tableViewController.argScript {
-            if self.searchField.stringValue.count == 0 {
-                return
-            }
-            argScript.args = self.searchField.stringValue
-            
-            hide()
-            scriptManager.runScript(argScript, into: editorView)
-            tableViewController.argScript = nil
-            return
-        }
+//        if let argScript = tableViewController.argScript {
+//            if self.searchField.stringValue.count == 0 {
+//                return
+//            }
+//            argScript.args = self.searchField.stringValue
+//
+//            hide()
+//            scriptManager.runScript(argScript, into: editorView)
+//            tableViewController.argScript = nil
+//            return
+//        }
         
         guard let script = tableViewController.selectedScript else {
             return
@@ -221,7 +221,13 @@ class PopoverViewController: NSViewController {
         hide()
 
         // Run the script afterwards in case we need to show a status
-        scriptManager.runScript(script, into: editorView)
+        if let pickCommand = scriptManager.runScript(script, into: editorView) {
+            self.pickerTableViewController.command = pickCommand
+            self.pickerTableViewController.script = script
+            self.pickerTableViewController.scriptManager = scriptManager
+            self.pickerTableViewController.editorView = editorView
+            self.pickerTableViewController.popoverView.show()
+        }
     }
     
 }

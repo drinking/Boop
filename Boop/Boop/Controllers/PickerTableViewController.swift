@@ -7,8 +7,13 @@
 //
 
 import Cocoa
+import SavannaKit
 
 class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
+    
+    weak var editorView: SyntaxTextView?
+    var script:Script?
+    var scriptManager:ScriptManager?
     
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var popoverView: PopoverView!
@@ -27,19 +32,7 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.tableView.action =  #selector(onItemClicked)
-        
-        let next = PickCommand(type:.action, list: [PickItem(title:"Xtem1",extra: nil),
-                                                    PickItem(title:"Xtem2",extra: nil),
-                                                    PickItem(title:"Xtem3",extra: nil),
-                                                    PickItem(title:"Xtem4",extra: nil)],next:nil)
-        
-        command = PickCommand(type:.picker, list: [PickItem(title: "item1",extra: nil),
-                                                   PickItem(title:"item2",extra: nil),
-                                                   PickItem(title:"item3",extra: nil),
-                                                   PickItem(title:"item4",extra: nil)],next:next)
-        
         
     }
     
@@ -83,12 +76,30 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     }
         
     @objc private func onItemClicked() {
-        if self.tableView.clickedRow > -1 {
+        
+        
+        if self.tableView.clickedRow > -1 &&
+            command?.type == .some(.picker) {
             if let item = command?.list[self.tableView.clickedRow] {
                 item.picked = !item.picked
                 self.tableView.reloadData()
             }
         }
+        
+        if command?.type == .some(.action) {
+            
+            guard let script = self.script, let textView = self.editorView else {
+                self.popoverView.hide()
+                return
+            }
+            
+            script.args = "\(command!.toArgs()):\(self.tableView.clickedRow)"
+            _ = scriptManager?.runScript(script, into: textView)
+            self.popoverView.hide()
+        }
+        
+        
+        
     }
     
 }

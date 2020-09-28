@@ -45,6 +45,7 @@ class PickCommand: NSObject {
     var type:PickCommandType
     var list:[PickItem]
     var nextCommand:PickCommand?
+    var prevCommand:PickCommand?
     
     public static func parse(string:String)-> PickCommand? {
         
@@ -63,6 +64,7 @@ class PickCommand: NSObject {
                     return PickItem(title: raw.title,extra: raw.extra)
                 }
                 pickCommand.nextCommand = PickCommand(type: next.type == 0 ? .picker : .action, list: nextList, next: nil)
+                pickCommand.nextCommand?.prevCommand = pickCommand
             }
             
             return pickCommand
@@ -71,5 +73,24 @@ class PickCommand: NSObject {
         
         return nil
     }
+    
+    public func toArgs()->String {
+        
+        if let prev = self.prevCommand {
+            
+            if prev.type == .picker {
+                let pickedString = prev.list.enumerated().map { (index,item) in
+                    return item.picked ? index : -1
+                }.filter { v in
+                    return v != -1
+                }.reduce("") { (result, v) -> String in
+                    result + "," + String(v)
+                }
+                return pickedString
+            }
+        }
+        return ""
+    }
+    
     
 }

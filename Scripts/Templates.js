@@ -70,12 +70,59 @@ const templates = {
 }
 
 function main(input) {
-	var t = templates[input.args];
-	var output = Mustache.render(t, { "meta": metaFromSql(input.text)});
-	input.text = output;
+	
+	
+	// 1,2,3,4:index
+	if (input.args) {
+		
+		var args = input.args.split(':');
+		console.log(args[1])
+		var t = templates[args[1]];
+		var includes = args[0].split(',');
+		
+		var output = Mustache.render(t, { "meta": metaFromSql(input.text,includes)});
+		input.text = output;
+		return
+		
+	}
+	
+	
+	var meta = metaFromSql(input.text);
+	var list = meta.params.map ( param =>
+		{
+			return {
+				title: param.type + " " + param.name + " " + param.comment,
+				extra: JSON.stringify(param)
+			}
+		}
+	);
+	
+	
+	console.log(list);
+	
+	var result = {
+		"type":0,
+		"list":list,
+		"nextCommand" :
+		{
+			"type":1,
+			"list":[
+				{"title":"To Bean","extra":"0"},
+				{"title":"To Request","extra":"1"},
+				{"title":"To Annotation","extra":"2"},
+				{"title":"To Mapper","extra":"3"},
+				{"title":"To Insertion","extra":"4"},
+				{"title":"To Update","extra":"5"}
+			]
+		}
+	};
+	
+	var str = JSON.stringify(result);
+	input.text = str;
+	
 }
 
-function metaFromSql(content) {
+function metaFromSql(content,includes) {
 
     let tableName = content.substring(content.indexOf("TABLE")+5,content.indexOf("(")).replace(" ","");
     
@@ -83,7 +130,12 @@ function metaFromSql(content) {
     if (!array) {
         throw "parse failure";
     }
-    var params = array.map(x => parseParam(x)).filter(x => x != null);
+    var params = array.map(x => parseParam(x)).filter((x,index) => x != null);
+	
+	if (includes) {
+		params.filter((x,index) => includes.includes(index));
+	}
+	
     params[params.length-1].comma = ""
 
     var comment;

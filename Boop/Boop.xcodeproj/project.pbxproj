@@ -78,6 +78,16 @@
 		2CC211C3236E3141007CECEE /* PreferencesTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC211C2236E3141007CECEE /* PreferencesTabViewController.swift */; };
 		2CC211C5236FB5C1007CECEE /* ScriptsSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC211C4236FB5C1007CECEE /* ScriptsSettingsViewController.swift */; };
 		2CEC93FA249C2D600080B9B8 /* ThemeSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEC93F9249C2D600080B9B8 /* ThemeSettingsViewController.swift */; };
+		44015C612521D33E009FB76E /* PickCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44015C602521D33E009FB76E /* PickCommand.swift */; };
+		44015C622521D33E009FB76E /* PickCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44015C602521D33E009FB76E /* PickCommand.swift */; };
+		44015C642521DB18009FB76E /* ActionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44015C632521DB18009FB76E /* ActionTableViewCell.swift */; };
+		44015C652521DB18009FB76E /* ActionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44015C632521DB18009FB76E /* ActionTableViewCell.swift */; };
+		440177AC25207B2B00B47B84 /* PickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AB25207B2B00B47B84 /* PickerTableViewController.swift */; };
+		440177AD25207B2B00B47B84 /* PickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AB25207B2B00B47B84 /* PickerTableViewController.swift */; };
+		440177B025207D7A00B47B84 /* PickItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AF25207D7A00B47B84 /* PickItem.swift */; };
+		440177B125207D7A00B47B84 /* PickItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AF25207D7A00B47B84 /* PickItem.swift */; };
+		4472E7662521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */; };
+		4472E7672521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +165,11 @@
 		2CC211C2236E3141007CECEE /* PreferencesTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesTabViewController.swift; sourceTree = "<group>"; };
 		2CC211C4236FB5C1007CECEE /* ScriptsSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptsSettingsViewController.swift; sourceTree = "<group>"; };
 		2CEC93F9249C2D600080B9B8 /* ThemeSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewController.swift; sourceTree = "<group>"; };
+		44015C602521D33E009FB76E /* PickCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickCommand.swift; sourceTree = "<group>"; };
+		44015C632521DB18009FB76E /* ActionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTableViewCell.swift; sourceTree = "<group>"; };
+		440177AB25207B2B00B47B84 /* PickerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerTableViewController.swift; sourceTree = "<group>"; };
+		440177AF25207D7A00B47B84 /* PickItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickItem.swift; sourceTree = "<group>"; };
+		4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,10 +262,12 @@
 		2C20668821FD63AB0082570E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				440177AE25207D3A00B47B84 /* Models */,
 				2CC211C1236E3125007CECEE /* Preferences */,
 				2C20668921FD63C90082570E /* MainViewController.swift */,
 				2C2066A121FE47090082570E /* PopoverViewController.swift */,
 				2C9761D82214E3B500AFF8CD /* ScriptsTableViewController.swift */,
+				440177AB25207B2B00B47B84 /* PickerTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -284,6 +301,8 @@
 				2C9761E02214E68D00AFF8CD /* ScriptTableViewCell.swift */,
 				2CA245DB224822EA00586DFD /* ScriptTableView.swift */,
 				2C60A4E524870678006496BA /* UpdateTextField.swift */,
+				4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */,
+				44015C632521DB18009FB76E /* ActionTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -326,6 +345,15 @@
 				2CEC93F9249C2D600080B9B8 /* ThemeSettingsViewController.swift */,
 			);
 			path = Preferences;
+			sourceTree = "<group>";
+		};
+		440177AE25207D3A00B47B84 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				440177AF25207D7A00B47B84 /* PickItem.swift */,
+				44015C602521D33E009FB76E /* PickCommand.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		53D77B44249A4019002A2F02 /* Frameworks */ = {
@@ -496,6 +524,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44015C642521DB18009FB76E /* ActionTableViewCell.swift in Sources */,
 				2CC211C5236FB5C1007CECEE /* ScriptsSettingsViewController.swift in Sources */,
 				2C53B6E0226D404E00DC6861 /* ScriptExecution.swift in Sources */,
 				2C0BC0DD24AAC518009B8631 /* Script+Require.swift in Sources */,
@@ -507,7 +536,9 @@
 				2C20669121FD64A20082570E /* DefaultTheme.swift in Sources */,
 				2C9761DC2214E45300AFF8CD /* ScriptManager.swift in Sources */,
 				2C20667621FD628E0082570E /* AppDelegate.swift in Sources */,
+				440177B025207D7A00B47B84 /* PickItem.swift in Sources */,
 				2C20669E21FE445E0082570E /* OverlayView.swift in Sources */,
+				4472E7662521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */,
 				2C9761E12214E68D00AFF8CD /* ScriptTableViewCell.swift in Sources */,
 				2CA245DC224822EA00586DFD /* ScriptTableView.swift in Sources */,
 				2C20669521FD6F400082570E /* BoopLexer.swift in Sources */,
@@ -516,9 +547,11 @@
 				2C2066A421FE47CE0082570E /* PopoverView.swift in Sources */,
 				2C20668B21FD63C90082570E /* MainViewController.swift in Sources */,
 				2C20669A21FD76900082570E /* StatusView.swift in Sources */,
+				44015C612521D33E009FB76E /* PickCommand.swift in Sources */,
 				2C60A4E624870678006496BA /* UpdateTextField.swift in Sources */,
 				2CC211C3236E3141007CECEE /* PreferencesTabViewController.swift in Sources */,
 				2CEC93FA249C2D600080B9B8 /* ThemeSettingsViewController.swift in Sources */,
+				440177AC25207B2B00B47B84 /* PickerTableViewController.swift in Sources */,
 				2C9761D92214E3B500AFF8CD /* ScriptsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -527,6 +560,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44015C652521DB18009FB76E /* ActionTableViewCell.swift in Sources */,
 				2C60A53B24871273006496BA /* ScriptsSettingsViewController.swift in Sources */,
 				2C60A53C24871273006496BA /* ScriptExecution.swift in Sources */,
 				2C60A53D24871273006496BA /* Colors.swift in Sources */,
@@ -538,7 +572,9 @@
 				2C9D045C24A2DAC600D27D20 /* ThemeSettingsViewController.swift in Sources */,
 				2C60A54224871273006496BA /* DefaultTheme.swift in Sources */,
 				2C60A54324871273006496BA /* ScriptManager.swift in Sources */,
+				440177B125207D7A00B47B84 /* PickItem.swift in Sources */,
 				2C60A54424871273006496BA /* AppDelegate.swift in Sources */,
+				4472E7672521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */,
 				2C60A54524871273006496BA /* OverlayView.swift in Sources */,
 				2C60A54624871273006496BA /* ScriptTableViewCell.swift in Sources */,
 				2C60A54724871273006496BA /* ScriptTableView.swift in Sources */,
@@ -547,9 +583,11 @@
 				2C60A54A24871273006496BA /* SearchField.swift in Sources */,
 				2C60A54B24871273006496BA /* PopoverView.swift in Sources */,
 				2C60A54C24871273006496BA /* MainViewController.swift in Sources */,
+				44015C622521D33E009FB76E /* PickCommand.swift in Sources */,
 				2C60A54D24871273006496BA /* StatusView.swift in Sources */,
 				2C60A54E24871273006496BA /* UpdateTextField.swift in Sources */,
 				2C60A54F24871273006496BA /* PreferencesTabViewController.swift in Sources */,
+				440177AD25207B2B00B47B84 /* PickerTableViewController.swift in Sources */,
 				2C60A55024871273006496BA /* ScriptsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

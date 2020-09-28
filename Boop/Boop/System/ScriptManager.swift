@@ -139,7 +139,7 @@ class ScriptManager: NSObject {
         }
     }
     
-    func runScript(_ script: Script, into editor: SyntaxTextView) {
+    func runScript(_ script: Script, into editor: SyntaxTextView) -> PickCommand? {
         
         let fullText = editor.text
         
@@ -149,12 +149,18 @@ class ScriptManager: NSObject {
             
             let insertPosition = (editor.contentTextView.selectedRanges.first as? NSRange)?.location
             let result = runScript(script, fullText: fullText, insertIndex: insertPosition)
+            
+            // show picker
+            if let command = PickCommand.parse(string: result) {
+                return command
+            }
+            
             // No selection, run on full text
             
             let unicodeSafeFullTextLength = editor.contentTextView.textStorage?.length ?? fullText.count
             replaceText(ranges: [NSRange(location: 0, length: unicodeSafeFullTextLength)], values: [result], editor: editor)
             
-            return
+            return nil
         }
         
         // Fun fact: You can have multi selections! Which means we need to disable
@@ -172,6 +178,7 @@ class ScriptManager: NSObject {
         
         replaceText(ranges: ranges, values: values, editor: editor)
         
+        return nil
         
     }
     

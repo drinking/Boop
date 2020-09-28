@@ -24,6 +24,8 @@ class PopoverViewController: NSViewController {
     @IBOutlet weak var tableViewController: ScriptsTableViewController!
     @IBOutlet weak var appDelegate: AppDelegate!
     
+    @IBOutlet weak var pickerTableViewController:PickerTableViewController!
+    
     var enabled = false // Closed by default
     var inputingArgs = false
 
@@ -39,6 +41,7 @@ class PopoverViewController: NSViewController {
         }
         
         setupKeyHandlers()
+        
     }
     
     func setupKeyHandlers() {
@@ -140,19 +143,22 @@ class PopoverViewController: NSViewController {
     }
     
     func show() {
+        
+//        pickerTableViewController.popoverView.show();
+        
         overlayView.show()
         popoverView.show()
-        
+
         // FIXME: Use localized strings
         statusView.setStatus(.help("Select your action"))
-        
+
         self.searchField.stringValue = ""
         self.tableHeightConstraint.constant = 0
         self.searchField.placeholderString = "Start typing..."
-        
+
         self.view.window?.makeFirstResponder(self.searchField)
         self.enabled = true
-        
+
         appDelegate.setPopover(isOpen: true)
         
     }

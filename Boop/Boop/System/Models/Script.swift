@@ -47,12 +47,6 @@ class Script: NSObject {
     var desc: String?
     var icon: String?
     var bias: Double?
-    var argsTint: String?
-    var needsArgs:Bool {
-        get {
-            return argsTint != nil
-        }
-    }
     
     weak var delegate: ScriptDelegate?
     
@@ -68,9 +62,7 @@ class Script: NSObject {
         self.tags = parameters["tags"] as? String
         self.desc = parameters["description"] as? String
         self.icon = (parameters["icon"] as? String)?.lowercased()
-        self.bias = parameters["bias"] as? Double
-        self.argsTint = parameters["argsTint"] as? String
-        
+        self.bias = parameters["bias"] as? Double        
         
         // We set the delegate after the initial eval to avoid
         // showing init errors from scripts at launch.

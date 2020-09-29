@@ -15,9 +15,10 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     var script:Script?
     var scriptManager:ScriptManager?
     
+    @IBOutlet weak var overlayView: OverlayView!
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var popoverView: PopoverView!
-    
+    @IBOutlet weak var titleView:NSTextField!
     @IBOutlet weak var nextButton: NSButton!
     
     @IBAction func nextButtonAction(_ sender: Any) {
@@ -27,7 +28,9 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     @IBOutlet weak var prevButton: NSButton!
     
     @IBAction func prevButtonAction(_ sender: Any) {
-        
+        if(self.command?.prevCommand != nil) {
+            self.command = self.command?.prevCommand
+        }
     }
     
     override func viewDidLoad() {
@@ -39,6 +42,9 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     var command: PickCommand? {
         didSet {
             tableView.reloadData()
+            self.prevButton.isEnabled = self.command?.prevCommand != nil
+            self.nextButton.isEnabled = self.command?.nextCommand != nil
+            self.titleView.stringValue = self.command?.title ?? "Picker"
         }
     }
     
@@ -56,6 +62,7 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
             }
             
             view.titleLabel.stringValue = item.title ?? "Not Title"
+            view .subTitleLabel.stringValue = item.subTitle ?? ""
             view.checkBox.state = item.picked ? .on : .off
             
             return view
@@ -66,6 +73,7 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
                 return view
             }
             view.textField?.stringValue = item.title ?? "Not Title"
+            view.subTitle.stringValue = item.subTitle ?? ""
             return view
         }
         
@@ -95,11 +103,20 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
             
             script.args = "\(command!.toArgs()):\(self.tableView.clickedRow)"
             _ = scriptManager?.runScript(script, into: textView)
-            self.popoverView.hide()
+            hide()
+            
         }
         
-        
-        
+    }
+    
+    func hide() {
+        self.popoverView.hide()
+        self.overlayView.hide()
+        self.editorView = nil
+        self.script?.args = nil
+        self.script = nil
+        self.scriptManager = nil
+        self.command = nil
     }
     
 }

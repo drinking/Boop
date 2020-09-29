@@ -10,12 +10,14 @@ import Foundation
 
 class PickItem: NSObject {
     
-    init(title:String,extra:String?) {
+    init(title:String,subTitle:String?,extra:String?) {
         self.title = title
         self.extra = extra
+        self.subTitle = subTitle
     }
     
     var title:String?
+    var subTitle:String?
     var extra:String?
     var picked:Bool = true
 }

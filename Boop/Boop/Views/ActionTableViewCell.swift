@@ -10,4 +10,6 @@ import Cocoa
 
 class ActionTableViewCell: NSTableCellView {
     
+    @IBOutlet weak var subTitle:NSTextField!
+    
 }

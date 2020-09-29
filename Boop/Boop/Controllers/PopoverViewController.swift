@@ -27,7 +27,6 @@ class PopoverViewController: NSViewController {
     @IBOutlet weak var pickerTableViewController:PickerTableViewController!
     
     var enabled = false // Closed by default
-    var inputingArgs = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,18 +50,6 @@ class PopoverViewController: NSViewController {
             (_ theEvent: NSEvent) -> NSEvent? in
             
             var didSomething = false
-            
-            if self.inputingArgs {
-                if(theEvent.keyCode == 36) {
-                    self.runSelectedScript()
-                }
-                
-                if theEvent.keyCode == 53 {
-                    self.hide()
-                }
-                
-                return theEvent
-            }
                 
             // Key codes:
             let kVKTab = 0x30
@@ -71,22 +58,24 @@ class PopoverViewController: NSViewController {
             // 53 is escape
             // 36 is enter
        
-            if theEvent.keyCode == 53 && self.enabled { // ESCAPE
+            if theEvent.keyCode == 53 { // ESCAPE
+                if(self.enabled) {
+                    // Let's dismiss the popover
+                    self.hide()
+                    
+                    didSomething = true
+                }
                 
-                // Let's dismiss the popover
-                self.hide()
+                if(self.pickerTableViewController.command != nil) {
+                    self.pickerTableViewController.hide()
+                    didSomething = true
+                }
                 
-                didSomething = true
             }
             
             if theEvent.keyCode == 36 && self.enabled { // ENTER
 
                 guard self.tableViewController.selectedScript != nil else {
-                    return theEvent
-                }
-                
-                if self.tableViewController.selectedScript!.needsArgs {
-                    self.showArgumentInput()
                     return theEvent
                 }
 
@@ -143,9 +132,7 @@ class PopoverViewController: NSViewController {
     }
     
     func show() {
-        
-//        pickerTableViewController.popoverView.show();
-        
+                
         overlayView.show()
         popoverView.show()
 
@@ -163,31 +150,15 @@ class PopoverViewController: NSViewController {
         
     }
     
-    func showArgumentInput() {
-        
-        // FIXME: Use localized strings
-        statusView.setStatus(.help("Input your arguments"))
-        
-        self.searchField.stringValue = ""
-        self.tableViewController.argScript = self.tableViewController.selectedScript
-        self.searchField.placeholderString = self.tableViewController.argScript?.argsTint ?? "Typing arguments..."
-        self.tableHeightConstraint.constant = 0
-        
-        self.view.window?.makeFirstResponder(self.searchField)
-        self.enabled = true
-        self.inputingArgs = true
-        
-    }
-    
     func hide() {
         overlayView.hide()
         popoverView.hide()
+        self.pickerTableViewController.hide()
         
         statusView.setStatus(.normal)
         
         self.view.window?.makeFirstResponder(self.editorView.contentTextView)
         self.enabled = false
-        self.inputingArgs = false
         self.tableHeightConstraint.animator().constant = 0
         
         tableViewController.results = []
@@ -200,19 +171,7 @@ class PopoverViewController: NSViewController {
     }
 
     @objc private func runSelectedScript() {
-        
-//        if let argScript = tableViewController.argScript {
-//            if self.searchField.stringValue.count == 0 {
-//                return
-//            }
-//            argScript.args = self.searchField.stringValue
-//
-//            hide()
-//            scriptManager.runScript(argScript, into: editorView)
-//            tableViewController.argScript = nil
-//            return
-//        }
-        
+    
         guard let script = tableViewController.selectedScript else {
             return
         }
@@ -222,11 +181,13 @@ class PopoverViewController: NSViewController {
 
         // Run the script afterwards in case we need to show a status
         if let pickCommand = scriptManager.runScript(script, into: editorView) {
+            self.pickerTableViewController.hide()
             self.pickerTableViewController.command = pickCommand
             self.pickerTableViewController.script = script
             self.pickerTableViewController.scriptManager = scriptManager
             self.pickerTableViewController.editorView = editorView
             self.pickerTableViewController.popoverView.show()
+            self.pickerTableViewController.overlayView.show()
         }
     }
     
@@ -235,10 +196,6 @@ class PopoverViewController: NSViewController {
 extension PopoverViewController: NSTextFieldDelegate {
     func controlTextDidChange(_ obj: Notification) {
         guard (obj.object as? SearchField) == searchField else {
-            return
-        }
-        
-        if self.inputingArgs {
             return
         }
         

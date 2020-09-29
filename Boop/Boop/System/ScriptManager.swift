@@ -150,7 +150,7 @@ class ScriptManager: NSObject {
             let insertPosition = (editor.contentTextView.selectedRanges.first as? NSRange)?.location
             let result = runScript(script, fullText: fullText, insertIndex: insertPosition)
             
-            // show picker
+            // Show picker
             if let command = PickCommand.parse(string: result) {
                 return command
             }
@@ -174,6 +174,17 @@ class ScriptManager: NSObject {
             
             return runScript(script, selection: value, fullText: fullText)
             
+        }
+        
+        // Only one commnad available for one selection
+        let commands = values.map { (result) -> Optional<PickCommand> in
+            PickCommand.parse(string: result)
+        }.filter { (command) -> Bool in
+            command != nil
+        }
+        
+        if commands.count  == 1 {
+            return commands[0]
         }
         
         replaceText(ranges: ranges, values: values, editor: editor)

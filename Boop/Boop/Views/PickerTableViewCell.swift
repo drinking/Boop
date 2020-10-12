@@ -10,7 +10,7 @@ import Cocoa
 
 class PickerTableViewCell: NSTableCellView {
     
-    @IBOutlet weak var checkBox: NSButton!
+    @IBOutlet weak var checkBox: CheckBox!
     @IBOutlet weak var titleLabel: NSTextField!
     @IBOutlet weak var subTitleLabel: NSTextField!
 }

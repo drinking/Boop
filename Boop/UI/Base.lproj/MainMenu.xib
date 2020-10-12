@@ -59,6 +59,7 @@
                 <outlet property="overlayView" destination="Cdf-EW-00p" id="3dL-8e-G85"/>
                 <outlet property="popoverView" destination="Ham-1B-P5D" id="WQR-iS-W11"/>
                 <outlet property="prevButton" destination="42T-WZ-uZX" id="OgE-oY-KAk"/>
+                <outlet property="reverseButton" destination="VJF-hD-Qed" id="9kw-Yu-lB3"/>
                 <outlet property="tableView" destination="tC3-zN-o1M" id="lqB-LU-nfl"/>
                 <outlet property="titleView" destination="58l-zc-Mxy" id="Jbl-92-Z1B"/>
                 <outlet property="view" destination="Ham-1B-P5D" id="d05-1s-ztE"/>
@@ -543,10 +544,21 @@ Gw
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="42T-WZ-uZX">
-                                <rect key="frame" x="346" y="323" width="40" height="32"/>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VJF-hD-Qed">
+                                <rect key="frame" x="14" y="323" width="77" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="&lt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0ox-XF-sRB">
+                                <buttonCell key="cell" type="push" title="Reverse" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xhj-IK-2TQ">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="reverse:" target="1e5-J8-Dxt" id="Gyd-ap-YRa"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="42T-WZ-uZX">
+                                <rect key="frame" x="321" y="323" width="57" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Back" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0ox-XF-sRB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -555,9 +567,9 @@ Gw
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RJA-11-N47">
-                                <rect key="frame" x="386" y="323" width="40" height="32"/>
+                                <rect key="frame" x="379" y="323" width="57" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IdM-UQ-Kbn">
+                                <buttonCell key="cell" type="push" title="Next" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IdM-UQ-Kbn">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -595,7 +607,7 @@ Gw
                                                             <rect key="frame" x="1" y="1" width="437" height="50"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Uny-F9-gLP">
+                                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Uny-F9-gLP" customClass="CheckBox" customModule="Boop" customModuleProvider="target">
                                                                     <rect key="frame" x="10" y="16" width="22" height="18"/>
                                                                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zhS-cD-7HK">
                                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -614,7 +626,7 @@ Gw
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="r5z-61-t2y">
-                                                                    <rect key="frame" x="33" y="3" width="394" height="21"/>
+                                                                    <rect key="frame" x="33" y="-1" width="394" height="21"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="21" id="XnG-yA-oL3"/>
                                                                     </constraints>
@@ -633,7 +645,7 @@ Gw
                                                                 <constraint firstAttribute="trailing" secondItem="fAM-tD-USR" secondAttribute="trailing" constant="12" id="flZ-LT-WuA"/>
                                                                 <constraint firstItem="r5z-61-t2y" firstAttribute="leading" secondItem="fAM-tD-USR" secondAttribute="leading" id="hpA-Nw-Lue"/>
                                                                 <constraint firstItem="fAM-tD-USR" firstAttribute="leading" secondItem="xMG-uE-SLA" secondAttribute="leading" constant="35" id="kai-v5-l2b"/>
-                                                                <constraint firstItem="r5z-61-t2y" firstAttribute="top" secondItem="fAM-tD-USR" secondAttribute="bottom" constant="-12" id="oTp-4m-dmK"/>
+                                                                <constraint firstItem="r5z-61-t2y" firstAttribute="top" secondItem="fAM-tD-USR" secondAttribute="bottom" constant="-8" id="oTp-4m-dmK"/>
                                                             </constraints>
                                                             <connections>
                                                                 <outlet property="checkBox" destination="Uny-F9-gLP" id="i3m-O5-unQ"/>

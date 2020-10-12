@@ -20,6 +20,8 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     @IBOutlet weak var popoverView: PopoverView!
     @IBOutlet weak var titleView:NSTextField!
     @IBOutlet weak var nextButton: NSButton!
+    @IBOutlet weak var reverseButton: NSButton!
+    
     
     @IBAction func nextButtonAction(_ sender: Any) {
         self.command = self.command?.nextCommand
@@ -32,11 +34,20 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
             self.command = self.command?.prevCommand
         }
     }
+    @IBAction func reverse(_ sender: Any) {
+        guard let list = command?.list else {
+            return
+        }
+        for item in list {
+            item.picked = !item.picked
+        }
+        self.tableView.reloadData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.action =  #selector(onItemClicked)
-        
+
     }
     
     var command: PickCommand? {
@@ -63,8 +74,7 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
             
             view.titleLabel.stringValue = item.title ?? "Not Title"
             view .subTitleLabel.stringValue = item.subTitle ?? ""
-            view.checkBox.state = item.picked ? .on : .off
-            
+            view.checkBox.item = item
             return view
         }else {
             let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "actionCell"), owner: self) as! ActionTableViewCell

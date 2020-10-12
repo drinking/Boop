@@ -13,8 +13,6 @@ import Fuse
 
 class ScriptManager: NSObject {
     
-    
-    
     static let userPreferencesPathKey = "scriptsFolderPath"
     static let userPreferencesDataKey = "scriptsFolderData"
     

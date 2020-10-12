@@ -86,6 +86,8 @@
 		440177AD25207B2B00B47B84 /* PickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AB25207B2B00B47B84 /* PickerTableViewController.swift */; };
 		440177B025207D7A00B47B84 /* PickItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AF25207D7A00B47B84 /* PickItem.swift */; };
 		440177B125207D7A00B47B84 /* PickItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AF25207D7A00B47B84 /* PickItem.swift */; };
+		4448FE2425343D9E00D997F3 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448FE2325343D9E00D997F3 /* CheckBox.swift */; };
+		4448FE2525343D9E00D997F3 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448FE2325343D9E00D997F3 /* CheckBox.swift */; };
 		4472E7662521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */; };
 		4472E7672521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -169,6 +171,7 @@
 		44015C632521DB18009FB76E /* ActionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTableViewCell.swift; sourceTree = "<group>"; };
 		440177AB25207B2B00B47B84 /* PickerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerTableViewController.swift; sourceTree = "<group>"; };
 		440177AF25207D7A00B47B84 /* PickItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickItem.swift; sourceTree = "<group>"; };
+		4448FE2325343D9E00D997F3 /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
 		4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -303,6 +306,7 @@
 				2C60A4E524870678006496BA /* UpdateTextField.swift */,
 				4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */,
 				44015C632521DB18009FB76E /* ActionTableViewCell.swift */,
+				4448FE2325343D9E00D997F3 /* CheckBox.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -538,6 +542,7 @@
 				2C20667621FD628E0082570E /* AppDelegate.swift in Sources */,
 				440177B025207D7A00B47B84 /* PickItem.swift in Sources */,
 				2C20669E21FE445E0082570E /* OverlayView.swift in Sources */,
+				4448FE2425343D9E00D997F3 /* CheckBox.swift in Sources */,
 				4472E7662521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */,
 				2C9761E12214E68D00AFF8CD /* ScriptTableViewCell.swift in Sources */,
 				2CA245DC224822EA00586DFD /* ScriptTableView.swift in Sources */,
@@ -574,6 +579,7 @@
 				2C60A54324871273006496BA /* ScriptManager.swift in Sources */,
 				440177B125207D7A00B47B84 /* PickItem.swift in Sources */,
 				2C60A54424871273006496BA /* AppDelegate.swift in Sources */,
+				4448FE2525343D9E00D997F3 /* CheckBox.swift in Sources */,
 				4472E7672521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */,
 				2C60A54524871273006496BA /* OverlayView.swift in Sources */,
 				2C60A54624871273006496BA /* ScriptTableViewCell.swift in Sources */,

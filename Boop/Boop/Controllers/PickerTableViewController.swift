@@ -22,25 +22,45 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     @IBOutlet weak var nextButton: NSButton!
     @IBOutlet weak var reverseButton: NSButton!
     
-    
     @IBAction func nextButtonAction(_ sender: Any) {
-        self.command = self.command?.nextCommand
+        switch self.command?.nextCommand {
+            case .command(var raw):
+                if let c = self.command {
+                    raw.prevCommand = .command(c)
+                }
+                self.command = raw
+                break
+            default:
+                break
+        }
     }
     
     @IBOutlet weak var prevButton: NSButton!
     
     @IBAction func prevButtonAction(_ sender: Any) {
-        if(self.command?.prevCommand != nil) {
-            self.command = self.command?.prevCommand
+        if let c = self.command?.prevCommand {
+            switch c {
+            case .command(let raw):
+                self.command = raw
+                break
+            default:
+                break
+            }
         }
     }
+    
     @IBAction func reverse(_ sender: Any) {
         guard let list = command?.list else {
             return
         }
-        for item in list {
-            item.picked = !item.picked
+        
+        command?.list =  list.map { (item) -> PickItem in
+            return PickItem(title: item.title,
+                               subTitle: item.subTitle,
+                               extra: item.extra,
+                               picked: item.picked == true ? false : true)
         }
+        
         self.tableView.reloadData()
     }
     
@@ -65,14 +85,14 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
-        if self.command?.type == .some(.picker) {
+        if self.command?.type == 0 {
             let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "pickerCell"), owner: self) as! PickerTableViewCell
             
             guard let item = command?.list[row] else {
                 return view
             }
             
-            view.titleLabel.stringValue = item.title ?? "Not Title"
+            view.titleLabel.stringValue = item.title
             view .subTitleLabel.stringValue = item.subTitle ?? ""
             view.checkBox.item = item
             return view
@@ -82,7 +102,7 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
             guard let item = command?.list[row] else {
                 return view
             }
-            view.textField?.stringValue = item.title ?? "Not Title"
+            view.textField?.stringValue = item.title
             view.subTitle.stringValue = item.subTitle ?? ""
             return view
         }
@@ -95,16 +115,16 @@ class PickerTableViewController: NSViewController, NSTableViewDelegate, NSTableV
         
     @objc private func onItemClicked() {
         
-        
         if self.tableView.clickedRow > -1 &&
-            command?.type == .some(.picker) {
-            if let item = command?.list[self.tableView.clickedRow] {
-                item.picked = !item.picked
+            command?.type == 0 {
+            if var item = command?.list[self.tableView.clickedRow] {
+                item.picked = item.picked == true ? false : true
+                command?.list[self.tableView.clickedRow] = item
                 self.tableView.reloadData()
             }
         }
         
-        if command?.type == .some(.action) {
+        if command?.type == 1 {
             
             guard let script = self.script, let textView = self.editorView else {
                 self.popoverView.hide()

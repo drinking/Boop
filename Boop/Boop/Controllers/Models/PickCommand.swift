@@ -13,63 +13,34 @@ enum PickCommandType {
     case action
 }
 
-struct PickNextCommandRaw: Codable {
-    let type:Int
-    let title:String?
-    let list:[PickItemRaw]
+struct PickItem: Codable {
+    var title:String
+    var subTitle:String?
+    var extra:String?
+    var picked:Bool?
 }
 
-struct PickCommandRaw: Codable {
-    let type:Int
-    let list:[PickItemRaw]
-    let title:String?
-    let nextCommand:PickNextCommandRaw?
-}
-
-struct PickItemRaw: Codable {
-    let title:String
-    let subTitle:String?
-    let extra:String?
-}
-
-class PickCommand: NSObject {
-        
-    init(type:PickCommandType, list:[PickItem], next:PickCommand?) {
-        self.type = type
-        self.list = list
-        self.nextCommand = next
-    }
-    
-    var type:PickCommandType
+struct PickCommand {
+    var type:Int
     var list:[PickItem]
     var title:String?
-    var nextCommand:PickCommand?
-    var prevCommand:PickCommand?
+    var nextCommand:Kind?
+    var prevCommand:Kind?
+    
+    indirect enum Kind {
+        case command(PickCommand)
+        case empty
+    }
+}
+
+extension PickCommand {
     
     public static func parse(string:String)-> PickCommand? {
         
         let decoder = JSONDecoder()
         if let data = string.data(using: .utf8),
-            let command = try? decoder.decode(PickCommandRaw.self, from: data) {
-            
-            let list = command.list.map { (raw) -> PickItem in
-                return PickItem(title: raw.title,subTitle: raw.subTitle,extra: raw.extra)
-            }
-            
-            let pickCommand = PickCommand(type: command.type == 0 ? .picker : .action, list: list, next: nil)
-            pickCommand.title = command.title;
-            
-            if let next = command.nextCommand {
-                let nextList = next.list.map { (raw) -> PickItem in
-                    return PickItem(title: raw.title, subTitle: raw.subTitle, extra: raw.extra)
-                }
-                pickCommand.nextCommand = PickCommand(type: next.type == 0 ? .picker : .action, list: nextList, next: nil)
-                pickCommand.nextCommand?.prevCommand = pickCommand
-                pickCommand.nextCommand?.title = next.title
-            }
-            
-            return pickCommand
-            
+            let command = try? decoder.decode(PickCommand.self, from: data) {
+            return command;
         }
         
         return nil
@@ -77,21 +48,67 @@ class PickCommand: NSObject {
     
     public func toArgs()->String {
         
-        if let prev = self.prevCommand {
-            
-            if prev.type == .picker {
-                let pickedString = prev.list.enumerated().map { (index,item) in
-                    return item.picked ? index : -1
-                }.filter { v in
-                    return v != -1
-                }.reduce("") { (result, v) -> String in
-                    result + "," + String(v)
-                }
-                return pickedString
-            }
+        guard let command = self.prevCommand,
+            case let .command(prev) = command else {
+            return ""
         }
+        
+        if prev.type == 0 {
+            let pickedString = prev.list.enumerated().map { (index,item) in
+                return item.picked == true ? index : -1
+            }.filter { v in
+                return v != -1
+            }.reduce("") { (result, v) -> String in
+                result + "," + String(v)
+            }
+            return pickedString
+        }
+        
         return ""
     }
+}
+
+extension PickCommand : Codable {
     
+    enum CodingKeys: String, CodingKey {
+        case type
+        case list
+        case title
+        case nextCommand
+        case prevCommand
+    }
+    
+    enum CodableError: Error {
+        case decoding(String)
+        case encoding(String)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        // do nothing
+    }
+
+    init(from decoder: Decoder) throws {
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        guard let list = try? container.decode([PickItem].self, forKey: .list),
+              let type = try? container.decode(Int.self, forKey: .type) else {
+            throw CodableError.decoding("Decoding Error")
+        }
+        
+        self.list = list
+        self.type = type
+        self.prevCommand = .empty
+        
+        if let title = try? container.decode(String.self, forKey: .title) {
+            self.title = title
+        }
+        
+        if let next = try? container.decode(PickCommand.self, forKey: .nextCommand) {
+            self.nextCommand = .command(next)
+        }
+        
+    }
     
 }
+

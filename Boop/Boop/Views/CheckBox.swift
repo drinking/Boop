@@ -10,14 +10,14 @@ import Cocoa
 
 class CheckBox : NSButton {
     
-    weak var item:PickItem! {
+    var item:PickItem! {
         didSet {
-            self.state = item.picked ? .on : .off
+            self.state = item.picked == true ? .on : .off
         }
     }
     
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
-        item.picked = !item.picked
+        item.picked = item.picked == true ? false : true
     }
 }

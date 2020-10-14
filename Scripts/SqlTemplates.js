@@ -1,4 +1,3 @@
-"use strict";
 /**
 	{
 		"api":1,
@@ -10,113 +9,124 @@
 	}
 **/
 
-let P = require('@boop/parsimmon')
+"use strict";
+const P = require('@boop/parsimmon')
 const { render } = require('@boop/mustache')
 
-const templates = {
-	"0": `
-	{{#meta}}
-	{{#params}}
-    /**
-    * {{comment}}
-    */
-    private {{type}} {{name}};
-	{{/params}}
-	{{/meta}}
-	`,
-	"1": `
+const templates = [
+{ title: "Bean", subTitle: "To Java Bean",template: `
+{{#meta}}
+{{#params}}
+   /**
+   * {{comment}}
+   */
+   private {{type}} {{name}};
+{{/params}}
+{{/meta}}`
+},
 
-	{{#meta}}
-	/** 
-	 * {{comment}}
-	{{#params}}
-	 * @param {{name}} {{comment}}
-	{{/params}}
-	 * @return
-	 * @author drinking
-	 * @since {{time}}
-	 * @version v1
-	 * @summary {{comment}}
-	 */
-	{{/meta}}
-	{{#meta}}
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	void name (@RequestHeader(XHeaders.LOGIN_USER_ID) long loginUserId,
-	{{#params}}
+{ title: "Request", subTitle: "To SPI defines and annotations", template: `
+{{#meta}}
+/** 
+ * {{comment}}
+{{#params}}
+ * @param {{name}} {{comment}}
+{{/params}}
+ * @return
+ * @author drinking
+ * @since {{time}}
+ * @version v1
+ * @summary {{comment}}
+ */
+{{/meta}}
+{{#meta}}
+@RequestMapping(value = "", method = RequestMethod.GET)
+void name (@RequestHeader(XHeaders.LOGIN_USER_ID) long loginUserId,
+{{#params}}
 	@RequestParam(value = "{{name}}", required = false, defaultValue = "{{defaults}}") {{type}} {{name}}{{comma}}
-	{{/params}});
-	{{/meta}}`,
-	"2": `
-	{{#meta}}
-    /** 
-     * {{comment}}
-    {{#params}}
-     * @param {{name}} {{comment}}
-    {{/params}}
-     * @return
-     * @author drinking
-     * @since {{time}}
-     * @version v1
-     * @summary {{comment}}
-     */
-	{{/meta}}`,
-	"3": `
-	{{#meta}}
-		Map<String, Object> param = MapSugar.paramMap(
-			{{#params}}
-				"{{name}}", {{name}}{{comma}}
-			{{/params}}
-			);
-	{{/meta}}`,
-	"4": `
-	
-	public int insert({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/meta}}) {
-		return sqlSessionCommon.insert(st("insert"),
+{{/params}});
+{{/meta}}`
+},
+
+{ title: "Annotation", subTitle: "To Java annotations", template :`
+{{#meta}}
+   /** 
+    * {{comment}}
+   {{#params}}
+    * @param {{name}} {{comment}}
+   {{/params}}
+    * @return
+    * @author drinking
+    * @since {{time}}
+    * @version v1
+    * @summary {{comment}}
+    */
+{{/meta}}`
+},
+
+{ title: "Mapper", subTitle: "To database mapper", template : `
+{{#meta}}
+Map<String, Object> param = MapSugar.paramMap(
+	{{#params}}
+	"{{name}}", {{name}}{{comma}}
+	{{/params}}
+);
+{{/meta}}`
+},
+
+{ title: "Insertion", subTitle: "Insertion method and mapper", template: `	
+public int insert({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/meta}}) {
+	return sqlSessionCommon.insert(st("insert"),
 			MapSugar.paramMap({{#meta}}{{#params}} "{{name}}", {{name}}{{comma}} {{/params}}{{/meta}}));
-	}
+}
 	
-	{{#meta}}
-	<insert id="insert" parameterType="map">
+{{#meta}}
+<insert id="insert" parameterType="map">
 	INSERT INTO {{{tableName}}} ({{#params}}{{name}}{{comma}}{{/params}})
 	VALUES ({{#params}}#{{=<% %>=}}{<%={{ }}=%>{{name}}{{=<% %>=}}}<%={{ }}=%>{{comma}}{{/params}})
-	</insert>
-	{{/meta}}`,
-	"5": `
-	
-	public int update({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/meta}}) {
-		return sqlSessionCommon.update(st("update"),
+</insert>
+{{/meta}}`
+},
+
+{ title: "Update", subTitle: "Update method and mapper", template: `
+public int update({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/meta}}) {
+	return sqlSessionCommon.update(st("update"),
 			MapSugar.paramMap({{#meta}}{{#params}} "{{name}}", {{name}}{{comma}} {{/params}}{{/meta}}));
-	}
+}
 	
-	{{#meta}}
-	<update id="update" parameterType="map">
+{{#meta}}
+<update id="update" parameterType="map">
 	UPDATE {{{tableName}}}
 	set
-	{{#params}}
-		{{name}} = #{{=<% %>=}}{<%={{ }}=%>{{name}}{{=<% %>=}}}<%={{ }}=%>{{comma}}
-	{{/params}}
+{{#params}}
+	{{name}} = #{{=<% %>=}}{<%={{ }}=%>{{name}}{{=<% %>=}}}<%={{ }}=%>{{comma}}
+{{/params}}
 	where id = #{id}
-	</update>
-	{{/meta}}
-	`,
-	"6": `
-	{{#meta}}
-	select  {{#params}}{{name}}{{comma}}  {{/params}} from {{tableName}}
-	where 
-	{{/meta}}	
-	`,
-	"7":`
-	{{#meta}}
-	curl '{{=<% %>=}}{{host}}<%={{ }}=%>/path/?{{#params}}{{name}}={{defaults}}&{{/params}}'
-  	-H 'Connection: keep-alive' \
-  	-H 'Accept: application/json, text/plain, */*' \
-  	-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36' \
-  	-H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8' \
-  --compressed \
-  --insecure
-  {{/meta}}	
-	`
-}
+</update>
+{{/meta}}
+`
+},
+
+{ title: "Selection", subTitle: "Select SQL", template: `
+{{#meta}}
+select  {{#params}}{{name}}{{comma}}  {{/params}} from {{tableName}}
+where 
+{{/meta}}	
+`
+},
+
+{ title: "CURL", subTitle: "CURL Request format", template: `
+{{#meta}}
+curl '{{=<% %>=}}{{host}}<%={{ }}=%>/path/?{{#params}}{{name}}={{defaults}}&{{/params}}'
+	-H 'Connection: keep-alive' \
+	-H 'Accept: application/json, text/plain, */*' \
+	-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36' \
+	-H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8' \
+	--compressed \
+	--insecure
+{{/meta}}	
+`}
+]
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -290,9 +300,8 @@ function tableComment() {
 }
 
 let SQLParser = P.createLanguage({
-	// This is the main entry point of the parser: a full JSON value.
 	value: r =>
-		P.seqMap(r.create, r.name, r.lbracket, r.fields, tableComment(),
+		P.seqMap(r.create, r.name, word("("), r.fields, tableComment(),
 			function (create, tableName, ignore1, fields, comment) {
 				let time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 				return {
@@ -301,19 +310,12 @@ let SQLParser = P.createLanguage({
 					comment: comment,
 					time: time
 				}
-			}),
-	// The basic tokens in JSON, with optional whitespace afterward.
-	create: () => token(word("create table")).thru(
+			}).desc("sql"),
+	create: () => token(word("create").skip(word("table"))).thru(
 		parser => whitespace.then(parser)
-	),
-	lbracket: () => word("("),
-	rbracket: () => word(")"),
-	quote: () => word("`"),
+		).desc("create"),
 	comma: () => word(","),
-	colon: () => word(":"),
-
-	// Regexp based parsers should generally be named for better error reporting.
-	name: r =>
+	name: () =>
 		token(P.regexp(/[a-z|A-Z|_]+/)
 			.wrap(P.alt(ignoreCaseString("`"), P.optWhitespace), P.alt(ignoreCaseString("`"), P.optWhitespace)))
 			.desc("name"),
@@ -333,11 +335,11 @@ let SQLParser = P.createLanguage({
 
 function main(input) {
 
-	// 1,2,3,4:index
+	// args format [picked rows seperate by ,]:[selected action index]
+	// e.g. 1,2,3,4:1 
 	console.log(input.args)
 	if (input.args) {
 		var args = input.args.split(':');
-		var t = templates[args[1]];
 
 		var picked = args[0].split(',');
 		var meta = SQLParser.value.tryParse(input.text);
@@ -347,7 +349,7 @@ function main(input) {
 		});
 		meta.params[meta.params.length - 1].comma = "";
 
-		var output = render(t, { meta });
+		var output = render(templates[args[1]].template, { meta });
 		input.text = output;
 		return
 
@@ -364,23 +366,14 @@ function main(input) {
 
 
 	var result = {
-		"type": 0,
-		"list": list,
-		"title": "Pick and continue...",
-		"nextCommand":
+		type: 0,
+		list: list,
+		title: "Pick and continue...",
+		nextCommand:
 		{
-			"type": 1,
-			"title": "Choose a template",
-			"list": [
-				{ "title": "Bean", "subTitle": "To Java Bean" },
-				{ "title": "Request", "subTitle": "To SPI defines and annotations" },
-				{ "title": "Annotation", "subTitle": "To Java annotations" },
-				{ "title": "Mapper", "subTitle": "To database mapper" },
-				{ "title": "Insertion", "subTitle": "Insertion method and mapper" },
-				{ "title": "Update", "subTitle": "Update method and mapper" },
-				{ "title": "Selection", "subTitle": "Select SQL" },
-				{ "title": "CURL", "subTitle": "CURL Request format" }
-			]
+			type: 1,
+			title: "Choose a template",
+			list: templates
 		}
 	};
 

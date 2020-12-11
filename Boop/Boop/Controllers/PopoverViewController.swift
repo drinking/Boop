@@ -27,6 +27,8 @@ class PopoverViewController: NSViewController {
     @IBOutlet weak var pickerTableViewController:PickerTableViewController!
     
     var enabled = false // Closed by default
+    
+    var hostVC:SwiftUIHostingViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +44,7 @@ class PopoverViewController: NSViewController {
         setupKeyHandlers()
         
     }
-    
+        
     func setupKeyHandlers() {
         
         var keyHandler: (_: NSEvent) -> NSEvent?
@@ -59,6 +61,7 @@ class PopoverViewController: NSViewController {
             // 36 is enter
        
             if theEvent.keyCode == 53 { // ESCAPE
+                self.hostVC?.dismiss(nil)
                 if(self.enabled) {
                     // Let's dismiss the popover
                     self.hide()
@@ -181,13 +184,19 @@ class PopoverViewController: NSViewController {
 
         // Run the script afterwards in case we need to show a status
         if let pickCommand = scriptManager.runScript(script, into: editorView) {
-            self.pickerTableViewController.hide()
-            self.pickerTableViewController.command = pickCommand
-            self.pickerTableViewController.script = script
-            self.pickerTableViewController.scriptManager = scriptManager
-            self.pickerTableViewController.editorView = editorView
-            self.pickerTableViewController.popoverView.show()
-            self.pickerTableViewController.overlayView.show()
+            let stb = NSStoryboard.init(name: "MyStoryBoard", bundle: Bundle.main)
+                print("xxx\(stb)")
+            self.hostVC = (stb.instantiateController(identifier: "SwiftUIHostingViewController")) as SwiftUIHostingViewController;
+            self.hostVC?.command = pickCommand
+            self.presentAsSheet(self.hostVC!)
+            
+//            self.pickerTableViewController.hide()
+//            self.pickerTableViewController.command = pickCommand
+//            self.pickerTableViewController.script = script
+//            self.pickerTableViewController.scriptManager = scriptManager
+//            self.pickerTableViewController.editorView = editorView
+//            self.pickerTableViewController.popoverView.show()
+//            self.pickerTableViewController.overlayView.show()
         }
     }
     

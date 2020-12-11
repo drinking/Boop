@@ -86,6 +86,8 @@
 		440177AD25207B2B00B47B84 /* PickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AB25207B2B00B47B84 /* PickerTableViewController.swift */; };
 		4448FE2425343D9E00D997F3 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448FE2325343D9E00D997F3 /* CheckBox.swift */; };
 		4448FE2525343D9E00D997F3 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448FE2325343D9E00D997F3 /* CheckBox.swift */; };
+		445C14A3261AA4A2003818D8 /* SwiftUIHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445C14A2261AA4A2003818D8 /* SwiftUIHostingViewController.swift */; };
+		445C14A6261AACDE003818D8 /* MyStoryBoard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 445C14A5261AACDE003818D8 /* MyStoryBoard.storyboard */; };
 		4472E7662521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */; };
 		4472E7672521B6BE001FC7B7 /* PickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -169,6 +171,8 @@
 		44015C632521DB18009FB76E /* ActionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTableViewCell.swift; sourceTree = "<group>"; };
 		440177AB25207B2B00B47B84 /* PickerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerTableViewController.swift; sourceTree = "<group>"; };
 		4448FE2325343D9E00D997F3 /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
+		445C14A2261AA4A2003818D8 /* SwiftUIHostingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIHostingViewController.swift; sourceTree = "<group>"; };
+		445C14A5261AACDE003818D8 /* MyStoryBoard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MyStoryBoard.storyboard; sourceTree = "<group>"; };
 		4472E7652521B6BE001FC7B7 /* PickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -268,6 +272,7 @@
 				2C2066A121FE47090082570E /* PopoverViewController.swift */,
 				2C9761D82214E3B500AFF8CD /* ScriptsTableViewController.swift */,
 				440177AB25207B2B00B47B84 /* PickerTableViewController.swift */,
+				445C14A2261AA4A2003818D8 /* SwiftUIHostingViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -313,6 +318,7 @@
 			children = (
 				2C20667921FD62910082570E /* MainMenu.xib */,
 				2C5ED41D2357F67200322893 /* Preferences.storyboard */,
+				445C14A5261AACDE003818D8 /* MyStoryBoard.storyboard */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -485,6 +491,7 @@
 			files = (
 				2C9761D52214E11600AFF8CD /* scripts in Resources */,
 				2C20667821FD62910082570E /* Assets.xcassets in Resources */,
+				445C14A6261AACDE003818D8 /* MyStoryBoard.storyboard in Resources */,
 				2C20667B21FD62910082570E /* MainMenu.xib in Resources */,
 				2C5ED41E2357F67200322893 /* Preferences.storyboard in Resources */,
 			);
@@ -547,6 +554,7 @@
 				2C2066A421FE47CE0082570E /* PopoverView.swift in Sources */,
 				2C20668B21FD63C90082570E /* MainViewController.swift in Sources */,
 				2C20669A21FD76900082570E /* StatusView.swift in Sources */,
+				445C14A3261AA4A2003818D8 /* SwiftUIHostingViewController.swift in Sources */,
 				44015C612521D33E009FB76E /* PickCommand.swift in Sources */,
 				2C60A4E624870678006496BA /* UpdateTextField.swift in Sources */,
 				2CC211C3236E3141007CECEE /* PreferencesTabViewController.swift in Sources */,
@@ -795,7 +803,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MARKETING_VERSION = 1.3.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = com.OKatBest.Boop;
@@ -826,7 +834,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MARKETING_VERSION = 1.3.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = com.okatbest.boop;

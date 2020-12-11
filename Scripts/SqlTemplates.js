@@ -20,7 +20,7 @@ const templates = [
    /**
    * {{comment}}
    */
-   private {{type}} {{name}};
+   private {{type}} {{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}};   
 {{/params}}
 {{/meta}}`
 },
@@ -30,7 +30,7 @@ const templates = [
 /** 
  * {{comment}}
 {{#params}}
- * @param {{name}} {{comment}}
+ * @param {{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}} {{comment}}
 {{/params}}
  * @return
  * @author drinking
@@ -43,7 +43,7 @@ const templates = [
 @RequestMapping(value = "", method = RequestMethod.GET)
 void name (@RequestHeader(XHeaders.LOGIN_USER_ID) long loginUserId,
 {{#params}}
-	@RequestParam(value = "{{name}}", required = false, defaultValue = "{{defaults}}") {{type}} {{name}}{{comma}}
+	@RequestParam(value = "{{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}", required = false, defaultValue = "{{defaults}}") {{type}} {{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}{{comma}}
 {{/params}});
 {{/meta}}`
 },
@@ -53,7 +53,7 @@ void name (@RequestHeader(XHeaders.LOGIN_USER_ID) long loginUserId,
    /** 
     * {{comment}}
    {{#params}}
-    * @param {{name}} {{comment}}
+    * @param {{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}} {{comment}}
    {{/params}}
     * @return
     * @author drinking
@@ -68,7 +68,7 @@ void name (@RequestHeader(XHeaders.LOGIN_USER_ID) long loginUserId,
 {{#meta}}
 Map<String, Object> param = MapSugar.paramMap(
 	{{#params}}
-	"{{name}}", {{name}}{{comma}}
+	"{{name}}", {{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}{{comma}}
 	{{/params}}
 );
 {{/meta}}`
@@ -77,13 +77,13 @@ Map<String, Object> param = MapSugar.paramMap(
 { title: "Insertion", subTitle: "Insertion method and mapper", template: `	
 public int insert({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/meta}}) {
 	return sqlSessionCommon.insert(st("insert"),
-			MapSugar.paramMap({{#meta}}{{#params}} "{{name}}", {{name}}{{comma}} {{/params}}{{/meta}}));
+			MapSugar.paramMap({{#meta}}{{#params}} "{{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}", {{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}{{comma}} {{/params}}{{/meta}}));
 }
 	
 {{#meta}}
 <insert id="insert" parameterType="map">
 	INSERT INTO {{{tableName}}} ({{#params}}{{name}}{{comma}}{{/params}})
-	VALUES ({{#params}}#{{=<% %>=}}{<%={{ }}=%>{{name}}{{=<% %>=}}}<%={{ }}=%>{{comma}}{{/params}})
+	VALUES ({{#params}}#{{=<% %>=}}{<%={{ }}=%>{{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}{{=<% %>=}}}<%={{ }}=%>{{comma}}{{/params}})
 </insert>
 {{/meta}}`
 },
@@ -99,7 +99,7 @@ public int update({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/m
 	UPDATE {{{tableName}}}
 	set
 {{#params}}
-	{{name}} = #{{=<% %>=}}{<%={{ }}=%>{{name}}{{=<% %>=}}}<%={{ }}=%>{{comma}}
+	{{name}} = #{{=<% %>=}}{<%={{ }}=%>{{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}{{=<% %>=}}}<%={{ }}=%>{{comma}}
 {{/params}}
 	where id = #{id}
 </update>
@@ -107,17 +107,35 @@ public int update({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/m
 `
 },
 
-{ title: "Selection", subTitle: "Select SQL", template: `
+{ title: "SEL&DEL", subTitle: "Select and delete SQL", template: `
 {{#meta}}
-select  {{#params}}{{name}}{{comma}}  {{/params}} from {{tableName}}
-where 
+select {{#params}}{{name}} {{#as}} as {{as}} {{/as}}{{comma}}{{/params}} from {{tableName}}
+{{#params}}
+	{{name}} = #{ {{name}} }  {{#comma}} and {{/comma}}
+{{/params}}
 {{/meta}}	
+
+public void delete({{#meta}}{{#params}} {{type}} {{name}}{{comma}}{{/params}}{{/meta}}) {
+	sqlSessionCommon.delete(st("delete"),
+			MapSugar.paramMap({{#meta}}{{#params}} "{{name}}", {{name}}{{comma}} {{/params}}{{/meta}}));
+}
+
+<delete id="delete" parameterType="map">
+{{#meta}}
+delete from {{tableName}}
+where
+{{#params}}
+	{{name}} = #{ {{name}} } {{#comma}} and {{/comma}}
+{{/params}}
+{{/meta}}
+</delete>
+
 `
 },
 
 { title: "CURL", subTitle: "CURL Request format", template: `
 {{#meta}}
-curl '{{=<% %>=}}{{host}}<%={{ }}=%>/path/?{{#params}}{{name}}={{defaults}}&{{/params}}'
+curl '{{=<% %>=}}{{host}}<%={{ }}=%>/path/?{{#params}}{{#as}}{{as}}{{/as}}{{^as}}{{name}}{{/as}}={{defaults}}&{{/params}}'
 	-H 'Connection: keep-alive' \
 	-H 'Accept: application/json, text/plain, */*' \
 	-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36' \
@@ -174,6 +192,7 @@ function allTypes() {
 		fieldType("tinyint"),
 		fieldType("smallint"),
 		fieldType("mediumint"),
+		fieldType("integer"),
 		fieldType("int"),
 		fieldType("bigint"),
 		fieldType("float"),
@@ -210,6 +229,7 @@ function toJavaType(sqlType) {
 	if (type == "tinyint" ||
 		type == "smallint" ||
 		type == "mediumint" ||
+		type == "integer" ||
 		type == "int") {
 		return "int";
 	} else if (type == "bigint") {
@@ -266,6 +286,9 @@ function optional(name) {
 function argumentValue(name) {
 	return P.alt(
 		P.seqMap(word(name), token(word("null")), function (a, b) {
+			return b;
+		}),
+		P.seqMap(word(name), token(P.digit), function (a, b) {
 			return b;
 		}),
 		word(name).skip(ignoreCaseString("'")).then(P.takeWhile(function (x) { return x !== "'"; })).skip(ignoreCaseString("'")).skip(whitespace),
@@ -326,7 +349,15 @@ let SQLParser = P.createLanguage({
 			function (name, type, others, defaults, comment) {
 				type = toJavaType(type);
 				let comma = ","
-				return { name, type, defaults, comment,comma}
+				let as = ""
+				if(name.includes("_")) {
+					as = name.split("_").map(x => {
+						return x.charAt(0).toUpperCase() + x.slice(1);
+					}).join("");
+					as = as.charAt(0).toLowerCase() + as.slice(1);
+				}
+
+				return { name, type, defaults, comment,comma, as}
 			}).sepBy(r.comma)
 			.desc("fields"),
 	type: () => allTypes(),
@@ -368,11 +399,11 @@ function main(input) {
 	var result = {
 		type: 0,
 		list: list,
-		title: "Pick and continue...",
+		title: "Then",
 		nextCommand:
 		{
 			type: 1,
-			title: "Choose a template",
+			title: "Templates",
 			list: templates
 		}
 	};

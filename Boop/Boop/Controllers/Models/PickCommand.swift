@@ -13,7 +13,8 @@ enum PickCommandType {
     case action
 }
 
-struct PickItem: Codable {
+struct PickItem: Codable,Identifiable {
+    let id = UUID()
     var title:String
     var subTitle:String?
     var extra:String?

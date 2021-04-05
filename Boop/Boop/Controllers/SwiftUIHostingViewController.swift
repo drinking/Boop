@@ -16,15 +16,16 @@ struct PickRow: SwiftUI.View {
 
 struct ActionRow: SwiftUI.View {
     @State var item: PickItem
-
+    var index:Int
     var body: some SwiftUI.View {
-        HStack {
-            Text("\(item.title)")
+        VStack(alignment: .leading) {
+            Text("(\(index + 1)) \(item.title)")
             Text("\(item.subTitle ?? "")")
         }
     }
 }
 
+typealias RUNFUNC = (Int)->Void
 
 struct MainView: SwiftUI.View {
     
@@ -38,6 +39,9 @@ struct MainView: SwiftUI.View {
     var script:Script?
     var textView:SavannaKit.SyntaxTextView?
     var scriptManager: ScriptManager?
+    
+    var runAction:((Int)->())?
+    
     
     var body: some SwiftUI.View {
       VStack {
@@ -53,20 +57,8 @@ struct MainView: SwiftUI.View {
                 
                 List {
                     ForEach(cmd.list.indices) { i in
-                        ActionRow(item: cmd.list[i]).onTapGesture {
-                            
-                            let pickedList = pickIndex[0...cmd.list.count].enumerated().map { (index,element)  in
-                                return element == true ? index : -1
-                            }.filter { (v) -> Bool in
-                                return v > -1
-                            }
-                            
-                            let argus = pickedList.reduce("") { (result, v) -> String in
-                                result + "," + String(v)
-                            }
-                            
-                            self.script?.args =  "\(argus):\(i)"
-                            _ = self.scriptManager?.runScript(self.script!,into:self.textView!)
+                        ActionRow(item: cmd.list[i], index:i).onTapGesture {
+                            self.runAction?(i)
                         }
                     }
                 }
@@ -78,6 +70,8 @@ struct MainView: SwiftUI.View {
 
 
 class SwiftUIHostingViewController: NSHostingController<MainView> {
+    
+    weak var popoverViewController:PopoverViewController?
 
     var command: PickCommand? {
         didSet {
@@ -105,11 +99,24 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
     required init?(coder: NSCoder) {
         super.init(coder: coder,rootView: MainView());
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
         setupKeyHandlers()
+        self.rootView.runAction = self.runAction
     }
+    
+    override func viewWillDisappear() {
+        super.viewWillDisappear()
+        if let e = event {
+            NSEvent.removeMonitor(e)
+        }
+        self.script?.args = nil
+//        popoverViewController?.setupKeyHandlers()
+        
+    }
+    
+    var event:Any?
     
     func setupKeyHandlers() {
 
@@ -124,13 +131,38 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
                 self.forward()
             }
             
+            if(theEvent.keyCode >= 18 && theEvent.keyCode <= 26) {
+                self.runAction(i: Int(theEvent.keyCode) - 18)
+            }
+            
             // Return an empty event to avoid the funk sound
             return nil
         }
         
         
-        NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: keyHandler)
+        event = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: keyHandler)
         
+    }
+    
+    func runAction(i:Int) {
+        
+        guard let cmd = self.command else {
+            return
+        }
+        
+        
+        let pickedList = self.rootView.pickIndex[0...cmd.list.count].enumerated().map { (index,element)  in
+            return element == true ? index : -1
+        }.filter { (v) -> Bool in
+            return v > -1
+        }
+        let argus = pickedList.reduce("") { (result, v) -> String in
+            result + "," + String(v)
+        }
+        
+        self.script?.args =  "\(argus):\(i)"
+        _ = self.scriptManager?.runScript(self.script!,into:self.editorView!)
+        self.dismiss(nil)
     }
     
     func backward() {
@@ -157,20 +189,5 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
                 break
         }
     }
-
-    func reverse() {
-        guard let list = command?.list else {
-            return
-        }
-        
-        command?.list =  list.map { (item) -> PickItem in
-            return PickItem(title: item.title,
-                               subTitle: item.subTitle,
-                               extra: item.extra,
-                               picked: item.picked == true ? false : true)
-        }
-        
-    }
-    
 
 }

@@ -82,8 +82,6 @@
 		44015C622521D33E009FB76E /* PickCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44015C602521D33E009FB76E /* PickCommand.swift */; };
 		44015C642521DB18009FB76E /* ActionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44015C632521DB18009FB76E /* ActionTableViewCell.swift */; };
 		44015C652521DB18009FB76E /* ActionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44015C632521DB18009FB76E /* ActionTableViewCell.swift */; };
-		440177AC25207B2B00B47B84 /* PickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AB25207B2B00B47B84 /* PickerTableViewController.swift */; };
-		440177AD25207B2B00B47B84 /* PickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440177AB25207B2B00B47B84 /* PickerTableViewController.swift */; };
 		4448FE2425343D9E00D997F3 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448FE2325343D9E00D997F3 /* CheckBox.swift */; };
 		4448FE2525343D9E00D997F3 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448FE2325343D9E00D997F3 /* CheckBox.swift */; };
 		445C14A3261AA4A2003818D8 /* SwiftUIHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445C14A2261AA4A2003818D8 /* SwiftUIHostingViewController.swift */; };
@@ -169,7 +167,6 @@
 		2CEC93F9249C2D600080B9B8 /* ThemeSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewController.swift; sourceTree = "<group>"; };
 		44015C602521D33E009FB76E /* PickCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickCommand.swift; sourceTree = "<group>"; };
 		44015C632521DB18009FB76E /* ActionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTableViewCell.swift; sourceTree = "<group>"; };
-		440177AB25207B2B00B47B84 /* PickerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerTableViewController.swift; sourceTree = "<group>"; };
 		4448FE2325343D9E00D997F3 /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
 		445C14A2261AA4A2003818D8 /* SwiftUIHostingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIHostingViewController.swift; sourceTree = "<group>"; };
 		445C14A5261AACDE003818D8 /* MyStoryBoard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MyStoryBoard.storyboard; sourceTree = "<group>"; };
@@ -271,7 +268,6 @@
 				2C20668921FD63C90082570E /* MainViewController.swift */,
 				2C2066A121FE47090082570E /* PopoverViewController.swift */,
 				2C9761D82214E3B500AFF8CD /* ScriptsTableViewController.swift */,
-				440177AB25207B2B00B47B84 /* PickerTableViewController.swift */,
 				445C14A2261AA4A2003818D8 /* SwiftUIHostingViewController.swift */,
 			);
 			path = Controllers;
@@ -559,7 +555,6 @@
 				2C60A4E624870678006496BA /* UpdateTextField.swift in Sources */,
 				2CC211C3236E3141007CECEE /* PreferencesTabViewController.swift in Sources */,
 				2CEC93FA249C2D600080B9B8 /* ThemeSettingsViewController.swift in Sources */,
-				440177AC25207B2B00B47B84 /* PickerTableViewController.swift in Sources */,
 				2C9761D92214E3B500AFF8CD /* ScriptsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -595,7 +590,6 @@
 				2C60A54D24871273006496BA /* StatusView.swift in Sources */,
 				2C60A54E24871273006496BA /* UpdateTextField.swift in Sources */,
 				2C60A54F24871273006496BA /* PreferencesTabViewController.swift in Sources */,
-				440177AD25207B2B00B47B84 /* PickerTableViewController.swift in Sources */,
 				2C60A55024871273006496BA /* ScriptsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

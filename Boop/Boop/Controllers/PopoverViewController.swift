@@ -24,8 +24,6 @@ class PopoverViewController: NSViewController {
     @IBOutlet weak var tableViewController: ScriptsTableViewController!
     @IBOutlet weak var appDelegate: AppDelegate!
     
-    @IBOutlet weak var pickerTableViewController:PickerTableViewController!
-    
     var enabled = false // Closed by default
     
     var hostVC:SwiftUIHostingViewController?
@@ -45,7 +43,7 @@ class PopoverViewController: NSViewController {
         
     }
         
-    func setupKeyHandlers() {
+    public func setupKeyHandlers() {
         
         var keyHandler: (_: NSEvent) -> NSEvent?
         keyHandler = {
@@ -66,11 +64,6 @@ class PopoverViewController: NSViewController {
                     // Let's dismiss the popover
                     self.hide()
                     
-                    didSomething = true
-                }
-                
-                if(self.pickerTableViewController.command != nil) {
-                    self.pickerTableViewController.hide()
                     didSomething = true
                 }
                 
@@ -153,10 +146,9 @@ class PopoverViewController: NSViewController {
         
     }
     
-    func hide() {
+    public func hide() {
         overlayView.hide()
         popoverView.hide()
-        self.pickerTableViewController.hide()
         
         statusView.setStatus(.normal)
         
@@ -190,15 +182,8 @@ class PopoverViewController: NSViewController {
             self.hostVC?.scriptManager = scriptManager
             self.hostVC?.script = script
             self.hostVC?.editorView = editorView
+            self.hostVC?.popoverViewController = self
             self.presentAsSheet(self.hostVC!)
-            
-//            self.pickerTableViewController.hide()
-//            self.pickerTableViewController.command = pickCommand
-//            self.pickerTableViewController.script = script
-//            self.pickerTableViewController.scriptManager = scriptManager
-//            self.pickerTableViewController.editorView = editorView
-//            self.pickerTableViewController.popoverView.show()
-//            self.pickerTableViewController.overlayView.show()
         }
     }
     

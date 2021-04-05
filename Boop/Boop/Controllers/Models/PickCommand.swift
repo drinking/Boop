@@ -46,27 +46,6 @@ extension PickCommand {
         
         return nil
     }
-    
-    public func toArgs()->String {
-        
-        guard let command = self.prevCommand,
-            case let .command(prev) = command else {
-            return ""
-        }
-        
-        if prev.type == 0 {
-            let pickedString = prev.list.enumerated().map { (index,item) in
-                return item.picked == true ? index : -1
-            }.filter { v in
-                return v != -1
-            }.reduce("") { (result, v) -> String in
-                result + "," + String(v)
-            }
-            return pickedString
-        }
-        
-        return ""
-    }
 }
 
 extension PickCommand : Codable {

@@ -185,9 +185,11 @@ class PopoverViewController: NSViewController {
         // Run the script afterwards in case we need to show a status
         if let pickCommand = scriptManager.runScript(script, into: editorView) {
             let stb = NSStoryboard.init(name: "MyStoryBoard", bundle: Bundle.main)
-                print("xxx\(stb)")
             self.hostVC = (stb.instantiateController(identifier: "SwiftUIHostingViewController")) as SwiftUIHostingViewController;
             self.hostVC?.command = pickCommand
+            self.hostVC?.scriptManager = scriptManager
+            self.hostVC?.script = script
+            self.hostVC?.editorView = editorView
             self.presentAsSheet(self.hostVC!)
             
 //            self.pickerTableViewController.hide()

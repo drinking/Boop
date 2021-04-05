@@ -1,78 +1,109 @@
 import SwiftUI
+import SavannaKit
 
-struct PickRow: View {
-    @State var item: PickItem
-
-    var body: some View {
+struct PickRow: SwiftUI.View {
+    var item: PickItem
+    @Binding var picked:Bool
+    var body: some SwiftUI.View {
         HStack {
-            Image(systemName: (self.item.picked == true ?
-                                "checkmark.square" : "square"))
+            Image(systemName: (self.picked == true ? "checkmark.square" : "square"))
             Text("\(item.title)")
         }.onTapGesture {
-            self.item.picked = self.item.picked != true
+            self.picked = self.picked != true
         }
     }
 }
 
-struct ActionRow: View {
+struct ActionRow: SwiftUI.View {
     @State var item: PickItem
 
-    var body: some View {
+    var body: some SwiftUI.View {
         HStack {
             Text("\(item.title)")
             Text("\(item.subTitle ?? "")")
-        }.onTapGesture {
-//            script.args = "\(command!.toArgs()):\(self.tableView.clickedRow)"
-//            _ = scriptManager?.runScript(script, into: textView)
         }
     }
 }
 
 
-struct SecondView: View {
-    var command: PickCommand?
+struct MainView: SwiftUI.View {
     
+    @State var pickIndex:[Bool] = Array(repeating: true, count: 256)
+    var command: PickCommand? {
+        willSet {
+            // todo if command.list count exceed 256 breaks
+        }
+    }
     
-    var body: some View {
+    var script:Script?
+    var textView:SavannaKit.SyntaxTextView?
+    var scriptManager: ScriptManager?
+    
+    var body: some SwiftUI.View {
       VStack {
         
         if let cmd = command {
             if (cmd.type == 0) {
-                List(cmd.list) { item in
-                    PickRow(item: item)
+                List {
+                    ForEach(cmd.list.indices) { i in
+                        PickRow(item: cmd.list[i], picked:self.$pickIndex[i])
+                    }
                 }
             }else {
-                List(cmd.list) { item in
-                    ActionRow(item: item).onTapGesture {
-//                        self.command?.toArgs() item.
+                
+                List {
+                    ForEach(cmd.list.indices) { i in
+                        ActionRow(item: cmd.list[i]).onTapGesture {
+                            
+                            let pickedList = pickIndex[0...cmd.list.count].enumerated().map { (index,element)  in
+                                return element == true ? index : -1
+                            }.filter { (v) -> Bool in
+                                return v > -1
+                            }
+                            
+                            let argus = pickedList.reduce("") { (result, v) -> String in
+                                result + "," + String(v)
+                            }
+                            
+                            self.script?.args =  "\(argus):\(i)"
+                            _ = self.scriptManager?.runScript(self.script!,into:self.textView!)
+                        }
                     }
                 }
             }
         }
-        
-//          Text("Second View").font(.system(size: 36))
-//          Text("Loaded by SecondView").font(.system(size: 14))
-        
-        
-        
       }.frame(width: 500, height: 300, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
   }
 }
 
 
-class SwiftUIHostingViewController: NSHostingController<SecondView> {
+class SwiftUIHostingViewController: NSHostingController<MainView> {
 
     var command: PickCommand? {
         didSet {
-//            for i in 1 ... self.command!.list.count {
-//                self.command!.list[i-1].id = i
-//            }
-            self.rootView.command = self.command
+            self.rootView.command = command
+        }
+    }
+    
+    var scriptManager: ScriptManager? {
+        didSet {
+            self.rootView.scriptManager = scriptManager
+        }
+    }
+    var editorView: SyntaxTextView? {
+        didSet {
+            self.rootView.textView = editorView
+        }
+    }
+    
+    var script:Script? {
+        didSet {
+            self.rootView.script = script
         }
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder,rootView: SecondView());
+        super.init(coder: coder,rootView: MainView());
     }
 
     override func viewDidLoad() {
@@ -81,13 +112,7 @@ class SwiftUIHostingViewController: NSHostingController<SecondView> {
     }
     
     func setupKeyHandlers() {
-        
-        
-        // 125 is down arrow
-        // 126 is up
-        // 53 is escape
-        // 36 is enter
-        
+
         var keyHandler: (_: NSEvent) -> NSEvent?
         keyHandler = {
             (_ theEvent: NSEvent) -> NSEvent? in
@@ -126,9 +151,6 @@ class SwiftUIHostingViewController: NSHostingController<SecondView> {
                 if let c = self.command {
                     raw.prevCommand = .command(c)
                 }
-//                for i in 1 ... raw.list.count {
-//                    raw.list[i-1].id = i
-//                }
                 self.command = raw
                 break
             default:

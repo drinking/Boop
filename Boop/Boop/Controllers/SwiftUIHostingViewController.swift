@@ -1,14 +1,48 @@
 import SwiftUI
 import SavannaKit
 
+
+struct PickRowViewPreview: SwiftUI.View {
+    var body: some SwiftUI.View {
+        VStack(alignment:.leading) {
+            HStack {
+                Image(systemName: "checkmark.square")
+                Text("title is a title").font(.system(size: 18))
+            }
+            Divider()
+        }.padding(3)
+        .onTapGesture {
+            
+        }
+    }
+}
+
+struct ActionRowPreview: SwiftUI.View {
+    var body: some SwiftUI.View {
+        HStack {
+            Text("[1]").font(.system(size: 18)).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 3))
+            VStack(alignment: .leading) {
+                Text("this is a title").font(.system(size: 18))
+                Text("this is a subtitle").font(.system(size: 15)).padding(1)
+                Divider()
+            }
+        }
+        
+    }
+}
+
+
 struct PickRow: SwiftUI.View {
     var item: PickItem
     @Binding var picked:Bool
     var body: some SwiftUI.View {
-        HStack {
-            Image(systemName: (self.picked == true ? "checkmark.square" : "square"))
-            Text("\(item.title)")
-        }.onTapGesture {
+        VStack(alignment:.leading) {
+            HStack {
+                Image(systemName: (self.picked == true ? "checkmark.square" : "square"))
+                Text("\(item.title)").font(.system(size: 18))
+            }
+            Divider()
+        }.padding(3).onTapGesture {
             self.picked = self.picked != true
         }
     }
@@ -18,9 +52,14 @@ struct ActionRow: SwiftUI.View {
     @State var item: PickItem
     var index:Int
     var body: some SwiftUI.View {
-        VStack(alignment: .leading) {
-            Text("(\(index + 1)) \(item.title)")
-            Text("\(item.subTitle ?? "")")
+        
+        HStack {
+            Text("[\(index + 1)]").font(.system(size: 18)).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 3))
+            VStack(alignment: .leading) {
+                Text("\(item.title)").font(.system(size: 18))
+                Text("\(item.subTitle ?? "")").font(.system(size: 15)).padding(1)
+                Divider()
+            }
         }
     }
 }
@@ -48,9 +87,12 @@ struct MainView: SwiftUI.View {
         
         if let cmd = command {
             if (cmd.type == 0) {
-                List {
-                    ForEach(cmd.list.indices) { i in
-                        PickRow(item: cmd.list[i], picked:self.$pickIndex[i])
+                VStack(alignment:.trailing) {
+                    NaviBar()
+                    List {
+                        ForEach(cmd.list.indices) { i in
+                            PickRow(item: cmd.list[i], picked:self.$pickIndex[i])
+                        }
                     }
                 }
             }else {
@@ -190,4 +232,48 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
         }
     }
 
+}
+
+
+struct NaviBar: SwiftUI.View {
+    var body: some SwiftUI.View {
+        HStack {
+            SwiftUI.Button("Inverse") {
+                print("Button tapped!")
+            }
+            Spacer()
+            Text("Board")
+            Spacer()
+            SwiftUI.Button("<") {
+                print("Button tapped!")
+            }
+            SwiftUI.Button(">") {
+                print("Button tapped!")
+            }
+        }.padding(10)
+    }
+}
+
+
+struct ContentView_Previews: PreviewProvider {
+    
+    var pickIndex:[Bool] = Array(repeating: true, count: 256)
+    
+    static var previews: some SwiftUI.View {
+        
+        VStack(alignment:.trailing) {
+            NaviBar()
+            List {
+                ForEach([1,2,3,4,5], id: \.self) { i in
+                    PickRowViewPreview()
+                }
+            }
+        }
+        
+//        List {
+//            ForEach([1,2,3,4,5], id: \.self) { i in
+//                ActionRowPreview()
+//            }
+//        }
+    }
 }

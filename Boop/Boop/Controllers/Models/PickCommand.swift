@@ -18,7 +18,13 @@ struct PickItem: Codable,Identifiable {
     var title:String
     var subTitle:String?
     var extra:String?
-    var picked:Bool?
+    var picked:Bool = true
+    
+    private enum CodingKeys: String, CodingKey {
+        case title
+        case subTitle
+        case extra
+    }
 }
 
 struct PickCommand {

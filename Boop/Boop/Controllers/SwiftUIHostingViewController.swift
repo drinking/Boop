@@ -1,6 +1,10 @@
 import SwiftUI
 import SavannaKit
 
+final class ModelData: ObservableObject {
+    @Published var list: [PickItem] = []
+    @Published var type : Int = 0
+}
 
 struct PickRowViewPreview: SwiftUI.View {
     var body: some SwiftUI.View {
@@ -38,12 +42,12 @@ struct PickRow: SwiftUI.View {
     var body: some SwiftUI.View {
         VStack(alignment:.leading) {
             HStack {
-                Image(systemName: (self.picked == true ? "checkmark.square" : "square"))
+                Image(systemName: (picked == true ? "checkmark.square" : "square"))
                 Text("\(item.title)").font(.system(size: 18))
             }
             Divider()
         }.padding(3).onTapGesture {
-            self.picked = self.picked != true
+            picked.toggle()
         }
     }
 }
@@ -64,88 +68,93 @@ struct ActionRow: SwiftUI.View {
     }
 }
 
-typealias RUNFUNC = (Int)->Void
-
 struct MainView: SwiftUI.View {
     
-    @State var pickIndex:[Bool] = Array(repeating: true, count: 256)
-    var command: PickCommand? {
-        willSet {
-            // todo if command.list count exceed 256 breaks
-        }
-    }
-    
+    @EnvironmentObject var command:ModelData
     var script:Script?
-    var textView:SavannaKit.SyntaxTextView?
-    var scriptManager: ScriptManager?
-    
-    var runAction:((Int)->())?
-    
+    var runAction:((Int)->())
     
     var body: some SwiftUI.View {
       VStack {
-        
-        if let cmd = command {
-            if (cmd.type == 0) {
+            if (command.type == 0) {
                 VStack(alignment:.trailing) {
                     NaviBar()
-                    List {
-                        ForEach(cmd.list.indices) { i in
-                            PickRow(item: cmd.list[i], picked:self.$pickIndex[i])
-                        }
+                    List(command.list.indices) { i in
+                        PickRow(item: command.list[i], picked:$command.list[i].picked)
                     }
                 }
             }else {
-                
                 List {
-                    ForEach(cmd.list.indices) { i in
-                        ActionRow(item: cmd.list[i], index:i).onTapGesture {
-                            self.runAction?(i)
+                    ForEach(command.list.indices) { i in
+                        ActionRow(item: command.list[i], index:i).onTapGesture {
+                            self.runAction(i)
                         }
                     }
                 }
             }
-        }
       }.frame(width: 500, height: 300, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
   }
+
 }
 
 
-class SwiftUIHostingViewController: NSHostingController<MainView> {
+class SwiftUIHostingViewController: NSHostingController<AnyView> {
     
     weak var popoverViewController:PopoverViewController?
+    
+    var data:ModelData = ModelData()
 
     var command: PickCommand? {
         didSet {
-            self.rootView.command = command
+            data.list = command!.list
+            data.type = command!.type
+            self.rootView = AnyView(MainView(runAction: { (cmd) in
+                self.script?.args =  "\(self.args):\(cmd)"
+                _ = self.scriptManager?.runScript(self.script!,into:self.editorView!)
+                self.dismiss(nil)
+            }).environmentObject(data))
         }
     }
     
-    var scriptManager: ScriptManager? {
-        didSet {
-            self.rootView.scriptManager = scriptManager
+    var args:String {
+        
+        var command:PickCommand = self.command!
+        var loop = true
+        while loop {
+            if let c = command.prevCommand {
+                switch c {
+                case .command(let raw):
+                    command = raw
+                    break
+                default:
+                    loop = false
+                    break
+                }
+            }
         }
-    }
-    var editorView: SyntaxTextView? {
-        didSet {
-            self.rootView.textView = editorView
+        
+        let pickedList = command.list.enumerated().map { (index,element)  in
+            return element.picked == true ? index : -1
+        }.filter { (v) -> Bool in
+            return v > -1
         }
-    }
-    
-    var script:Script? {
-        didSet {
-            self.rootView.script = script
+        let args = pickedList.reduce("") { (result, v) -> String in
+            result + "," + String(v)
         }
+        return args
     }
+
+    var scriptManager: ScriptManager?
+    var editorView: SyntaxTextView?
+    var script:Script?
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder,rootView: MainView());
+        super.init(coder: coder,rootView: AnyView(MainView(runAction: { (Int) in }).environmentObject(ModelData())));
     }
     
     override func viewWillAppear() {
         super.viewWillAppear()
         setupKeyHandlers()
-        self.rootView.runAction = self.runAction
     }
     
     override func viewWillDisappear() {
@@ -154,7 +163,7 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
             NSEvent.removeMonitor(e)
         }
         self.script?.args = nil
-//        popoverViewController?.setupKeyHandlers()
+        popoverViewController?.setupKeyHandlers()
         
     }
     
@@ -174,7 +183,7 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
             }
             
             if(theEvent.keyCode >= 18 && theEvent.keyCode <= 26) {
-                self.runAction(i: Int(theEvent.keyCode) - 18)
+//                self.runAction(Int(theEvent.keyCode) - 18)
             }
             
             // Return an empty event to avoid the funk sound
@@ -185,28 +194,7 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
         event = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: keyHandler)
         
     }
-    
-    func runAction(i:Int) {
-        
-        guard let cmd = self.command else {
-            return
-        }
-        
-        
-        let pickedList = self.rootView.pickIndex[0...cmd.list.count].enumerated().map { (index,element)  in
-            return element == true ? index : -1
-        }.filter { (v) -> Bool in
-            return v > -1
-        }
-        let argus = pickedList.reduce("") { (result, v) -> String in
-            result + "," + String(v)
-        }
-        
-        self.script?.args =  "\(argus):\(i)"
-        _ = self.scriptManager?.runScript(self.script!,into:self.editorView!)
-        self.dismiss(nil)
-    }
-    
+
     func backward() {
         if let c = self.command?.prevCommand {
             switch c {
@@ -222,8 +210,9 @@ class SwiftUIHostingViewController: NSHostingController<MainView> {
     func forward() {
         switch self.command?.nextCommand {
             case .command(var raw):
-                if let c = self.command {
-                    raw.prevCommand = .command(c)
+                if let _ = self.command {
+                    self.command?.list = data.list
+                    raw.prevCommand = .command(self.command!)
                 }
                 self.command = raw
                 break
